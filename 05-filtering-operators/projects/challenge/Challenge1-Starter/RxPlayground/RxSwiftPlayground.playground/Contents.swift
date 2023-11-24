@@ -1,6 +1,13 @@
 import Foundation
 import RxSwift
 
+public func example(of description: String,
+                    action: () -> Void) {
+    print("\n--- Example of:", description, "---")
+    action()
+}
+
+
 example(of: "Challenge 1") {
   let disposeBag = DisposeBag()
   
@@ -30,7 +37,27 @@ example(of: "Challenge 1") {
   let input = PublishSubject<Int>()
   
   // Add your code here
-  
+    input
+        .skipWhile { number in
+            return number == 0
+        }
+        .filter { number in
+            return number < 10
+        }
+        .take(10)
+        .toArray()
+        .subscribe(
+            onSuccess: { numbers in
+                let phone = phoneNumber(from: numbers)
+                
+                if let contact = contacts[phone] {
+                    print("Dialing \(contact) (\(phone))")
+                } else {
+                    print("Contact not found")
+                }
+            }
+        )
+        .disposed(by: disposeBag)
   
   input.onNext(0)
   input.onNext(603)
@@ -40,7 +67,7 @@ example(of: "Challenge 1") {
   
   // Confirm that 7 results in "Contact not found",
   // and then change to 2 and confirm that Shai is found
-  input.onNext(7)
+  input.onNext(2)
   
   "5551212".forEach {
     if let number = (Int("\($0)")) {
