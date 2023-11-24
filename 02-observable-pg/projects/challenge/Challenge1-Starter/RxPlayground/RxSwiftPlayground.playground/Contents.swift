@@ -1,21 +1,35 @@
 import Foundation
 import RxSwift
 
+public func example(of description: String,
+                    action: () -> Void) {
+    print("\n--- Example of:", description, "---")
+    action()
+}
+
 example(of: "never") {
-  let observable = Observable<Any>.never()
-  
-  observable
-    .subscribe(
-      onNext: { element in
-        print(element)
-      },
-      onCompleted: {
-        print("Completed")
-      },
-      onDisposed: {
-        print("Disposed")
-      }
-    )
+    let disposeBag = DisposeBag()
+    
+    let observable = Observable<Any>.never()
+    
+    observable
+        .do(
+            onSubscribe: {
+                print("do onSubscribe")
+            }
+        )
+        .subscribe(
+            onNext: { element in
+                print(element)
+            },
+            onCompleted: {
+                print("Completed")
+            },
+            onDisposed: {
+                print("Disposed")
+            }
+        )
+        .disposed(by: disposeBag)
 }
 
 /// Copyright (c) 2020 Razeware LLC
